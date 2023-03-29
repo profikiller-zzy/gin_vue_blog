@@ -1,0 +1,17 @@
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  db: gin_vue_blog
+  user: root
+  password: root
+  log_level: dev
+logger:
+  level: info
+  prefix: '[gin_vue_blog]'
+  director: log
+  show-line: ture
+  log-in-console: true
+system:
+  host: "0.0.0.0"
+  port: 8080
+  env: dev
