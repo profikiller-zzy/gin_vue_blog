@@ -1,9 +1,9 @@
 mysql:
-  host: 127.0.0.1
+  host: localhost
   port: 3306
   db: gin_vue_blog
   user: root
-  password: root
+  password: 01312934a
   log_level: dev
 logger:
   level: info
