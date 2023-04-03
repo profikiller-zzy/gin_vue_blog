@@ -15,6 +15,7 @@ type Mysql struct {
 	Config   string `yaml:"config"`    // 高级设置，列如charset
 }
 
+// Dsn 返回mysql连接名
 func (m Mysql) Dsn() string {
 	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?%s",
 		m.User,
