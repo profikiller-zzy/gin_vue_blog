@@ -14,7 +14,7 @@ func main() {
 	global.Db = core.InitGorm()
 	// 初始化日志，并将日志写入全局变量
 	global.Log = core.InitLogger()
-
+	// 初始化gin路由引擎
 	r := router.InitRouter()
 
 	global.Log.Info(fmt.Sprintf("gvb_sever 运行在:%s", global.Config.System.Addr()))

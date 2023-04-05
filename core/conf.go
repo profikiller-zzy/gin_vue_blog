@@ -20,7 +20,6 @@ func InitConfig() *config.Config {
 	if err != nil {
 		log.Fatalf("config Init Unmarshal: %v", err) // log.Fatalf()用于记录一条严重的错误消息，并且终止程序运行
 	}
-	fmt.Println("config yamlFile Init success.")
-	fmt.Println(config)
+	//fmt.Println("config yamlFile Init success.")
 	return config
 }

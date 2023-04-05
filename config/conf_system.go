@@ -12,5 +12,5 @@ type System struct {
 
 // Addr 返回服务器地址和端口组成的字符串
 func (s System) Addr() string {
-	return fmt.Sprintf("%s.%d", s.Host, s.Port)
+	return fmt.Sprintf("%s:%d", s.Host, s.Port)
 }
