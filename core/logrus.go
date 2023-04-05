@@ -46,11 +46,11 @@ func (t *LogFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 		// 自定义打印调用日志的函数和行号
 		funcVal := entry.Caller.Function
 		// entry.Caller.File是调用函数的名称，entry.Caller.Line是调用时调用代码所在的行号
-		fileVal := fmt.Sprintf("%s.%d", funcVal, path.Base(entry.Caller.File), entry.Caller.Line)
+		fileVal := fmt.Sprintf("%s.%d", path.Base(entry.Caller.File), entry.Caller.Line)
 		// entry.Message是调用log方法时传入函数的日志信息
-		fmt.Fprintf(b, "%s [%s] \x1b[0;%dm%s\x1b[0m %s %s %s\n", log.Prefix(), Timestamp, levelColor, entry.Level, fileVal, funcVal, entry.Message)
+		fmt.Fprintf(b, "%s [%s] \x1b[%dm%s\x1b[0m %s %s %s\n", log.Prefix(), Timestamp, levelColor, entry.Level, fileVal, funcVal, entry.Message)
 	} else {
-		fmt.Fprintf(b, "%s [%s] \x1b[0;%dm%s\x1b[0m %s \n", Timestamp, levelColor, entry.Level, entry.Message)
+		fmt.Fprintf(b, "%s [%s] \x1b[%dm%s\x1b[0m %s\n", log.Prefix(), Timestamp, levelColor, entry.Level, entry.Message)
 	}
 	return b.Bytes(), nil
 }

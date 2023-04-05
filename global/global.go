@@ -9,5 +9,5 @@ import (
 var (
 	Config *config.Config
 	Db     *gorm.DB
-	Log    logrus.Logger
+	Log    *logrus.Logger
 )
