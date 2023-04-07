@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// Response 封装了一些gin公共的响应
+// Response 封装了一些响应成功和失败的response
 type Response struct {
 	Code int    `json:"code"`
 	Data any    `json:"data"`
