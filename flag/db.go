@@ -8,8 +8,14 @@ import (
 func MakeMigration() {
 	var err error
 	// 自定义多对多关系表
-	global.Db.SetupJoinTable(&model.UserModel{}, "CollectModels", &model.UserCollect{})
-	global.Db.SetupJoinTable(&model.MenuModel{}, "MenuBanner", &model.MenuBanner{})
+	err = global.Db.SetupJoinTable(&model.UserModel{}, "CollectModels", &model.UserCollect{})
+	if err != nil {
+		global.Log.Warn(err.Error())
+	}
+	err = global.Db.SetupJoinTable(&model.MenuModel{}, "MenuBanner", &model.MenuBanner{})
+	if err != nil {
+		global.Log.Warn(err.Error())
+	}
 	// 对模型自动迁移
 	err = global.Db.Set("gorm:table_options", "ENGINE=InnoDB").
 		AutoMigrate(
