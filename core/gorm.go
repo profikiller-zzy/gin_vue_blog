@@ -33,5 +33,6 @@ func InitGorm() *gorm.DB {
 	sqlDb.SetMaxIdleConns(10)               // 最大空闲连接数
 	sqlDb.SetMaxOpenConns(100)              // 连接池最大容量
 	sqlDb.SetConnMaxLifetime(time.Hour * 4) // 连接最大复用时间，不能超过mysql的wait_timeout
+	global.Log.Info("连接到mysql数据库成功！")
 	return db
 }
