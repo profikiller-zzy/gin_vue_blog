@@ -32,3 +32,26 @@ site_info:
   bilibili_Url: 暂无
   gitee_Url: 暂无
   github_url: https://github.com/profikiller-zzy/gin_vue_blog
+qq:
+  app_id: "200301312934"
+  key: qqkey
+  redirect: http://127.0.0.1:8080/api/setting/
+email:
+  host: localhost
+  port: "8080"
+  user: ""
+  password: 3548361574@qq.com
+  default_form_email: profikiller
+  use_ssl: true
+  user_tsl: false
+qi_niu:
+  access_key: xxx
+  secret_key: xx
+  bucket: xx
+  cdn: xx
+  zone: xx
+  size: 0
+jwt:
+  secret_key: xx
+  expire_time: 0
+  issuer: xx

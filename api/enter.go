@@ -7,5 +7,5 @@ type ApiGroup struct {
 	SettingApi setting_api.SettingApi
 }
 
-// 实例化ApiGroup对象
+// ApiGroupApp 实例化ApiGroup对象
 var ApiGroupApp = new(ApiGroup)
