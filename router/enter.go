@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type RouterGroup struct {
+type RGroup struct {
 	*gin.RouterGroup
 }
 
@@ -15,10 +15,9 @@ func InitRouter() *gin.Engine {
 
 	apiRouter := router.Group("/api/")
 
-	apiRouterGroupApp := RouterGroup{
+	apiRouterGroupApp := RGroup{
 		RouterGroup: apiRouter,
 	}
 	apiRouterGroupApp.SettingRouter()
-
 	return router
 }
