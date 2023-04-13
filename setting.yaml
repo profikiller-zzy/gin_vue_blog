@@ -16,6 +16,9 @@ system:
   host: 127.0.0.1
   port: 8080
   env: release
+save_upload:
+  size: 2
+  path: uploads/file
 site_info:
   created_at: "2023-04-12"
   bei_an: 暂无
@@ -45,6 +48,7 @@ email:
   use_ssl: true
   user_tsl: false
 qi_niu:
+  enable: false
   access_key: xxx
   secret_key: xx
   bucket: xx

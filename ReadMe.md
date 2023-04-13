@@ -482,4 +482,161 @@ func MakeMigration() {
 
 ```
 
-# 系统
+# 系统配置API
+
+主要的配置有 `site` `qq` `email` `qiniu` `jwt`,这里采用的做法是通过配置uri，将多个api合为一个api，有利有弊。  
+利：只用编写一个api接口  
+弊：接口的入参和出参不统一  
+
+## 查询
+```azure
+// SettingInfoView 处理请求查看相应模块视图的函数
+func (SettingApi) SettingInfoView(c *gin.Context) {
+	var uri SettingUri
+	err := c.ShouldBindUri(&uri)
+	if err != nil {
+		global.Log.Error(err.Error())
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	switch uri.Name {
+	case "site":
+		response.OKWithData(global.Config.SiteInfo, c)
+	case "qq":
+		response.OKWithData(global.Config.QQ, c)
+	case "email":
+		response.OKWithData(global.Config.Email, c)
+	case "qi_niu":
+		response.OKWithData(global.Config.QiNiu, c)
+	case "jwt":
+		response.OKWithData(global.Config.Jwt, c)
+	default:
+		response.FailWithMessage("请输入正确的uri，“site”、“qq”、“email”、“qi_niu“或”jwt“", c)
+	}
+}
+```
+
+## 修改
+```azure
+// SettingInfoUpdate 处理修改相应模块设置参数的函数
+// (注意事项) 通过指定uri以获取和修改不同模块的做法，可以减少接口数量
+// 也有弊端，弊端就是接口不能统一
+func (SettingApi) SettingInfoUpdate(c *gin.Context) {
+	var uri SettingUri
+	err := c.ShouldBindUri(&uri)
+	if err != nil {
+		global.Log.Error(err.Error())
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	switch uri.Name {
+	case "site":
+		SiteUpdate(c)
+	case "qq":
+		QQUpdate(c)
+	case "email":
+		EmailUpdate(c)
+	case "qi_niu":
+		QiNiuUpdate(c)
+	case "jwt":
+		JwtUpdate(c)
+	default:
+		response.FailWithMessage("请输入正确的uri，“site”、“qq”、“email”、“qi_niu“或”jwt“", c)
+	}
+	core.SetYaml()
+}
+```
+下面的五个函数针对不同的uri，对全局配置文件`global.Config`的不同模块的配置信息进行修改：  
+```azure
+// SiteUpdate 包含以下共5个函数分别对应修改本地全局变量`global.Config`中的不同模块
+func SiteUpdate(c *gin.Context) {
+	var confSiteInfo config.SiteInfo
+	err := c.ShouldBindJSON(&confSiteInfo)
+	if err != nil {
+		//
+		response.FailWithCode(response.ParameterError, c)
+		return
+	}
+	global.Config.SiteInfo = confSiteInfo
+	err = core.SetYaml()
+	if err != nil {
+		global.Log.Error(err.Error())
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OKWithMessage("修改成功", c)
+}
+
+func QQUpdate(c *gin.Context) {
+	var confQQInfo config.QQ
+	err := c.ShouldBindJSON(&confQQInfo)
+	if err != nil {
+		//
+		response.FailWithCode(response.ParameterError, c)
+		return
+	}
+	global.Config.QQ = confQQInfo
+	err = core.SetYaml()
+	if err != nil {
+		global.Log.Error(err.Error())
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OKWithMessage("修改成功", c)
+}
+
+func EmailUpdate(c *gin.Context) {
+	var confEmailInfo config.Email
+	err := c.ShouldBindJSON(&confEmailInfo)
+	if err != nil {
+		//
+		response.FailWithCode(response.ParameterError, c)
+		return
+	}
+	global.Config.Email = confEmailInfo
+	err = core.SetYaml()
+	if err != nil {
+		global.Log.Error(err.Error())
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OKWithMessage("修改成功", c)
+}
+
+func QiNiuUpdate(c *gin.Context) {
+	var confQINiuInfo config.QiNiu
+	err := c.ShouldBindJSON(&confQINiuInfo)
+	if err != nil {
+		//
+		response.FailWithCode(response.ParameterError, c)
+		return
+	}
+	global.Config.QiNiu = confQINiuInfo
+	err = core.SetYaml()
+	if err != nil {
+		global.Log.Error(err.Error())
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OKWithMessage("修改成功", c)
+}
+
+func JwtUpdate(c *gin.Context) {
+	var confJwtInfo config.Jwt
+	err := c.ShouldBindJSON(&confJwtInfo)
+	if err != nil {
+		//
+		response.FailWithCode(response.ParameterError, c)
+		return
+	}
+	global.Config.Jwt = confJwtInfo
+	err = core.SetYaml()
+	if err != nil {
+		global.Log.Error(err.Error())
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OKWithMessage("修改成功", c)
+}
+```

@@ -1,6 +1,7 @@
 package response
 
 import (
+	"gin_vue_blog_AfterEnd/global"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -52,4 +53,10 @@ func Fail(c *gin.Context) {
 
 func FailWithMessage(msg string, c *gin.Context) {
 	Result(Error, map[string]interface{}{}, msg, c)
+}
+
+func LogFail(err error, c *gin.Context) {
+	FailWithMessage(err.Error(), c)
+	global.Log.Error(err.Error())
+	return
 }

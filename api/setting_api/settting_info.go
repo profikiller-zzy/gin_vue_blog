@@ -39,6 +39,8 @@ func (SettingApi) SettingInfoView(c *gin.Context) {
 }
 
 // SettingInfoUpdate 处理修改相应模块设置参数的函数
+// (注意事项) 通过指定uri以获取和修改不同模块的做法，可以减少接口数量
+// 也有弊端，弊端就是接口不能统一
 func (SettingApi) SettingInfoUpdate(c *gin.Context) {
 	var uri SettingUri
 	err := c.ShouldBindUri(&uri)

@@ -6,7 +6,7 @@ import (
 
 // SettingRouter 系统配置api
 func (r RGroup) SettingRouter() {
-	settingApi := api.ApiGroupApp.SettingApi
-	r.GET("/setting/:name", settingApi.SettingInfoView)
-	r.PUT("/setting/:name", settingApi.SettingInfoUpdate)
+	settingApiApp := api.ApiGroupApp.SettingApi
+	r.GET("/setting/:name", settingApiApp.SettingInfoView)
+	r.PUT("/setting/:name", settingApiApp.SettingInfoUpdate)
 }
