@@ -4,8 +4,8 @@ mysql:
   db: gin_vue_blog
   user: root
   password: 01312934a
-  log_level: dev
-  config: ""
+  log_level: debug
+  config: "charset=utf8&parseTime=True&loc=Local"
 logger:
   level: info
   prefix: '[gin_vue_blog]'
@@ -15,10 +15,10 @@ logger:
 system:
   host: 127.0.0.1
   port: 8080
-  env: release
+  env: debug
 save_upload:
   size: 2
-  path: uploads/file
+  path: uploads/image_file
 site_info:
   created_at: "2023-04-12"
   bei_an: 暂无

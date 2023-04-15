@@ -12,6 +12,10 @@ type RGroup struct {
 func InitRouter() *gin.Engine {
 	gin.SetMode(global.Config.System.Env)
 	router := gin.Default()
+	err := router.SetTrustedProxies([]string{"127.0.0.1"})
+	if err != nil {
+		global.Log.Warnln(err.Error())
+	}
 
 	apiRouter := router.Group("/api/")
 

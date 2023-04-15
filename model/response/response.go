@@ -13,6 +13,12 @@ type Response struct {
 	Msg  string `json:"msg"`
 }
 
+// ListResponse 泛型类型,用于在使用时指定特定类型`T`，返回列表数据
+type ListResponse[T any] struct {
+	Count    int64 `json:"count"`
+	DataList []T   `json:"data_list"`
+}
+
 const (
 	Success = 0
 	Error   = 7
@@ -32,6 +38,15 @@ func OK(data any, msg string, c *gin.Context) {
 
 func OKWithData(data any, c *gin.Context) {
 	Result(Success, data, "操作成功", c)
+}
+
+// OKWithPagingData 完成对分页数据进行响应封装
+func OKWithPagingData[T any](list []T, count int64, c *gin.Context) {
+	resp := ListResponse[T]{
+		Count:    count,
+		DataList: list,
+	}
+	OKWithData(resp, c)
 }
 
 func OKWithMessage(msg string, c *gin.Context) {

@@ -482,13 +482,14 @@ func MakeMigration() {
 
 ```
 
-# 系统配置API
+# API编写
+## 配置信息API
 
 主要的配置有 `site` `qq` `email` `qiniu` `jwt`,这里采用的做法是通过配置uri，将多个api合为一个api，有利有弊。  
 利：只用编写一个api接口  
 弊：接口的入参和出参不统一  
 
-## 查询
+### 查询配置信息
 ```azure
 // SettingInfoView 处理请求查看相应模块视图的函数
 func (SettingApi) SettingInfoView(c *gin.Context) {
@@ -517,7 +518,7 @@ func (SettingApi) SettingInfoView(c *gin.Context) {
 }
 ```
 
-## 修改
+### 修改配置信息
 ```azure
 // SettingInfoUpdate 处理修改相应模块设置参数的函数
 // (注意事项) 通过指定uri以获取和修改不同模块的做法，可以减少接口数量
@@ -639,4 +640,184 @@ func JwtUpdate(c *gin.Context) {
 	}
 	response.OKWithMessage("修改成功", c)
 }
+```
+
+## 图片API
+### 上传一个或多个图片  
+用户上传一个或多个图片，后端返回每个图片的对应结果(因文件大小过大导致上传失败、图片保存到服务端失败、成功等等结果)：  
+```azure
+package image_api
+
+import (
+	"fmt"
+	"gin_vue_blog_AfterEnd/global"
+	"gin_vue_blog_AfterEnd/model/response"
+	"github.com/gin-gonic/gin"
+	"io/fs"
+	"mime/multipart"
+	"os"
+	"path"
+)
+
+type FileUploadResponse struct {
+	FileName  string `json:"file_name"`  // 上传文件名
+	IsSuccess bool   `json:"is_success"` // 是否上传成功
+	Msg       string `json:"msg"`        // 返回信息
+}
+
+// ImageUploadingView 上传图片并将图片保存在uploads文件夹中
+func (ImageApi) ImageUploadingView(c *gin.Context) {
+	form, err := c.MultipartForm()
+	if err != nil {
+		response.LogFail(err, c)
+		return
+	}
+	var FileHeaderList []*multipart.FileHeader = form.File["image"]
+	if len(FileHeaderList) == 0 {
+		response.FailWithMessage("没有指定任何文件或者文件不存在", c)
+		return
+	}
+	var basePath string = global.Config.SaveUpload.Path
+	var size int64 = global.Config.SaveUpload.Size
+
+	// 判断路径是否存在，如果不存在则创建
+	if _, err := os.Stat(basePath); os.IsNotExist(err) { // 当前指定文件路径不存在
+		err = os.MkdirAll(basePath, fs.ModePerm)
+		if err != nil {
+			global.Log.Error(err.Error())
+		}
+	}
+
+	var upResList []FileUploadResponse = make([]FileUploadResponse, len(FileHeaderList))
+	for index, FileHeader := range FileHeaderList {
+		filePath := path.Join("uploads", FileHeader.Filename)
+		// 判断文件大小是否大于指定最大文件大小
+		if FileHeader.Size > (size << 20) {
+			upResList[index] = FileUploadResponse{
+				FileName:  FileHeader.Filename,
+				IsSuccess: false,
+				Msg:       fmt.Sprintf("上传图片大小大于设定大小，设定大小为 %d MB，当前图片大小为 %.3f MB", size, float64(FileHeader.Size)/(2<<20)),
+			}
+		} else {
+			err = c.SaveUploadedFile(FileHeader, filePath)
+			if err != nil { // 图片上传失败
+				upResList[index] = FileUploadResponse{
+					FileName:  FileHeader.Filename,
+					IsSuccess: false,
+					Msg:       fmt.Sprintf("上传图片保存到本地失败，错误信息:%s", err.Error()),
+				}
+			} else { // 上传成功
+				upResList[index] = FileUploadResponse{
+					FileName:  FileHeader.Filename,
+					IsSuccess: true,
+					Msg:       fmt.Sprintf("上传成功，当前图片大小为 %.3f MB", float64(FileHeader.Size)/(2<<20)),
+				}
+			}
+		}
+	}
+	response.OKWithData(upResList, c)
+}
+```
+### 白名单和黑名单(选用白名单)  
+白名单和黑名单用于限制上传文件的类型：白名单指的是允许上传的文件类型列表，只有在该列表中的文件类型才能被上传，其他类型的文件则会被拒绝上传；而黑名单则是指禁止上传的文件类型列表，只有不在该列表中的文件类型才能被上传，列表中的文件类型都会被拒绝上传。  
+ - 黑名单  
+判断文件名后缀，如果与黑名单中的后缀符合，那就拒绝上传  
+ - 白名单
+判断文件名后缀，如果与白名单中的后缀符合，那就允许上传，否则拒绝上传    
+```azure
+// ImageWhiteList 图片上传白名单
+var ImageWhiteList = []string{
+	".jpg",
+	".png",
+	".apng",
+	".jpeg",
+	".tiff",
+	".gif",
+	".ico",
+	".svg",
+	".webp",
+}
+```
+
+### 返回图片列表
+
+前端请求返回图片列表，提供`pageNum`和`pageSize`参数，后端根据`pageNum`和`pageSize`对要返回的图片列表进行分页：
+```azure
+package image_api
+
+   import (
+	"fmt"
+	"gin_vue_blog_AfterEnd/model"
+	"gin_vue_blog_AfterEnd/model/response"
+	"gin_vue_blog_AfterEnd/service/common_service"
+	"github.com/gin-gonic/gin"
+)
+
+func (ImageApi) ImageListView(c *gin.Context) {
+	var pageModel model.PageInfo
+	err := c.ShouldBindQuery(&pageModel)
+if err != nil {
+		response.FailWithMessage(fmt.Sprintf("参数绑定失败，error：%s", err.Error()), c)
+   return
+      }
+	var imageList []model.BannerModel
+	var count int64
+
+	// 对图片列表进行分页
+	imageList, count, err = common_service.PagingList(model.BannerModel{}, common_service.PageInfoDebug{
+		PageInfo: pageModel,
+		Debug:    true,
+	})
+	response.OKWithPagingData(imageList, count, c)
+return
+   }
+```
+
+其中函数`common_service.PagingList`用到了泛型，对不同数据模型的数据项进行分页，从数据库中查询后返回指定页的数据列表
+```azure
+package common_service
+
+   import (
+	"gin_vue_blog_AfterEnd/global"
+	"gin_vue_blog_AfterEnd/model"
+	"gorm.io/gorm"
+)
+
+type PageInfoDebug struct {
+	model.PageInfo
+	Debug bool // 是否打印sql语句
+}
+
+// PagingList 对不同数据模型的数据项进行分页，返回指定页的所有数据和所有数据项的数量
+func PagingList[T any](model T, debug PageInfoDebug) (list []T, count int64, err error) {
+	// 对数据模型列表进行分页
+	db := global.Db
+if debug.Debug {
+		db = global.Db.Session(&gorm.Session{Logger: global.MysqlLog})
+	}
+	var offset int
+	count = db.Find(&list).RowsAffected
+   if debug.PageNum == 0 { // 如果
+		offset = 0
+	} else {
+		offset = (debug.PageNum - 1) * debug.PageSize
+	}
+	err = db.Limit(debug.PageSize).Offset(offset).Find(&list).Error
+return list, count, err
+}
+
+```
+
+其中sql实现分页的话：
+```azure
+// 假设一页展示`pageSize`项，当前为第pageNum页
+    select * for model limit pageSize offset (pageNum-1)*pageSize
+// goloang gorm
+if debug.PageNum == 0 { // 如果
+		offset = 0
+	} else {
+		offset = (debug.PageNum - 1) * debug.PageSize
+	}
+	err = db.Limit(debug.PageSize).Offset(offset).Find(&list).Error
+return list, count, err
 ```

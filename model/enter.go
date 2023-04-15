@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 type MODEL struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`            // 主键ID
