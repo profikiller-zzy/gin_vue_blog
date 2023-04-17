@@ -29,7 +29,7 @@ func UploadFileToQiNiu(data []byte, prefix string, fileName string) (filePath st
 	putExtra := storage.PutExtra{
 		Params: map[string]string{},
 	}
-	key := fmt.Sprintf("%s/%s_%s", prefix, time.Now().Format("2006-01-02 15:04:05.000"), fileName)
+	key := fmt.Sprintf("%s/%s_%s", prefix, time.Now().Format("2006-01-02_15:04:05.000"), fileName)
 
 	dataLen := int64(len(data))
 	err = formUploader.Put(context.Background(), &ret, upToken, key, bytes.NewReader(data), dataLen, &putExtra)
