@@ -821,3 +821,74 @@ if debug.PageNum == 0 { // 如果
 	err = db.Limit(debug.PageSize).Offset(offset).Find(&list).Error
 return list, count, err
 ```
+使用到了钩子函数和批量删除
+### 图片删除
+
+```azure
+package image_api
+
+import (
+	"fmt"
+	"gin_vue_blog_AfterEnd/global"
+	"gin_vue_blog_AfterEnd/model"
+	"gin_vue_blog_AfterEnd/model/response"
+	"github.com/gin-gonic/gin"
+)
+
+func (ImageApi) ImageRemoveView(c *gin.Context) {
+	var rmReq model.RemoveRequest
+	var imageList []model.BannerModel
+	var count int64 = 0
+
+	err := c.ShouldBindJSON(&rmReq)
+	if err != nil {
+		global.Log.Warnln(fmt.Sprintf("参数绑定失败，请确认请求类型为JSON，error：%s", err.Error()))
+		response.FailWithMessage(fmt.Sprintf("参数绑定失败，请确认请求类型为JSON，error：%s", err.Error()), c)
+		return
+	}
+
+	count = global.Db.Find(&imageList, rmReq.IDList).RowsAffected
+	if count == 0 { // 需要删除的图片ID没有在数据库中查到
+		response.FailWithMessage("文件不存在", c)
+		return
+	}
+	global.Db.Delete(&model.BannerModel{}, rmReq.IDList)
+	response.FailWithMessage(fmt.Sprintf("删除 %d 张图片成功", count), c)
+}
+```
+
+钩子函数用于处理删除本地图片的情况，本地图片需要删除数据库记录和图片在本地的存储：  
+```azure
+package model
+
+import (
+	"fmt"
+	"gin_vue_blog_AfterEnd/global"
+	"gin_vue_blog_AfterEnd/model/ctype"
+	"gorm.io/gorm"
+	"os"
+)
+
+type BannerModel struct {
+	MODEL
+	Path             string                 `json:"path"`                                // 图片URL，如果存储在本地则为图片路径，存储在云服务器上则是图片链接
+	Hash             string                 `json:"hash"`                                // 图片的Hash值，用以判断重复图片
+	Name             string                 `gorm:"size:36" json:"name"`                 // 图片的名称
+	ImageStorageMode ctype.ImageStorageMode `gorm:"default:1" json:"image_storage_mode"` // 图片的存储方式，可以存储在本地或七牛云服务器上
+}
+
+// BeforeDelete 钩子函数，删除BannerModel记录前自动调用
+func (b *BannerModel) BeforeDelete(tx *gorm.DB) (err error) {
+	if b.ImageStorageMode == ctype.Local {
+		// 本地图片，删除数据库存储记录，还需要删除本地的存储
+		err = os.Remove(b.Path)
+		if err != nil {
+			global.Log.Warnln(fmt.Sprintf("本地删除图片失败，图片路径为：%s", b.Path))
+			return err
+		}
+	}
+	// 存储在云服务器上的图片则不用删除图片在云服务器上的存储
+	return nil
+}
+
+```
