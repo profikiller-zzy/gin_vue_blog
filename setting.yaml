@@ -48,13 +48,13 @@ email:
   use_ssl: true
   user_tsl: false
 qi_niu:
-  enable: false
-  access_key: xxx
-  secret_key: xx
-  bucket: xx
-  cdn: xx
-  zone: xx
-  size: 0
+  enable: true
+  access_key: 1HlGSQlD_2sLtyRB9BlOTv7VibTfA48mXQ6zer8D
+  secret_key: nz5nqqZjtHFtgCc8eQ6wLZurnEutTrB_7src69jl
+  bucket: profikiller
+  cdn: rt8ywig7i.bkt.clouddn.com
+  zone: cn-east-2
+  size: 5
 jwt:
   secret_key: xx
   expire_time: 0
