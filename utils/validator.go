@@ -15,7 +15,8 @@ func GetMsgLabel(err error, obj interface{}) string {
 		for _, e := range errs {
 			// 循环每一个报错信息
 			// 根据报错字段名，获取结构体的具体字段
-			if f, exits := objType.Elem().FieldByName(e.Field()); exits {
+			field := e.Field()
+			if f, exits := objType.Elem().FieldByName(field); exits {
 				msg := f.Tag.Get("msg")
 				return msg
 			}

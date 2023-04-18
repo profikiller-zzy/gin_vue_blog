@@ -1,6 +1,7 @@
 package api
 
 import (
+	"gin_vue_blog_AfterEnd/api/adver_api"
 	"gin_vue_blog_AfterEnd/api/image_api"
 	"gin_vue_blog_AfterEnd/api/setting_api"
 )
@@ -9,6 +10,7 @@ import (
 type ApiGroup struct {
 	SettingApi setting_api.SettingApi
 	ImageApi   image_api.ImageApi
+	AdAPI      adver_api.AdApi
 }
 
 // ApiGroupApp 实例化ApiGroup对象
