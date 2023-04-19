@@ -1,4 +1,4 @@
-package image_api
+package ad_api
 
 import (
 	"fmt"
@@ -8,22 +8,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (ImageApi) ImageRemoveView(c *gin.Context) {
+func (AdApi) AdRemoveView(c *gin.Context) {
 	var rmReq model.RemoveRequest
-	var imageList []model.BannerModel
+	var adList []model.AdModel
 	var count int64 = 0
 
 	err := c.ShouldBindJSON(&rmReq)
 	if err != nil {
-		response.FailWithMessage(fmt.Sprintf("参数绑定失败，error：%s", err.Error()), c)
+		response.FailWithMessage(fmt.Sprintf("参数绑定失败，请确认请求类型为JSON，error：%s", err.Error()), c)
 		return
 	}
 
-	count = global.Db.Find(&imageList, rmReq.IDList).RowsAffected
+	count = global.Db.Find(&adList, rmReq.IDList).RowsAffected
 	if count == 0 { // 需要删除的图片ID没有在数据库中查到
 		response.FailWithMessage("文件不存在", c)
 		return
 	}
-	global.Db.Delete(&model.BannerModel{}, rmReq.IDList)
-	response.FailWithMessage(fmt.Sprintf("删除 %d 张图片成功", count), c)
+	global.Db.Delete(&model.AdModel{}, rmReq.IDList)
+	response.FailWithMessage(fmt.Sprintf("删除 %d 广告记录成功", count), c)
 }

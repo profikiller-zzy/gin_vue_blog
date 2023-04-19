@@ -19,16 +19,17 @@ func PagingList[T any](model T, debug PageInfoDebug) (list []T, count int64, err
 		db = global.Db.Session(&gorm.Session{Logger: global.MysqlLog})
 	}
 	var offset int
-	count = db.Find(&list).RowsAffected
+	// 使用到model T入参中携带的条件参数
+	count = db.Where(model).Select("id").Find(&list).RowsAffected
 	if debug.PageNum == 0 { // 如果
 		offset = 0
 	} else {
 		offset = (debug.PageNum - 1) * debug.PageSize
 	}
 
-	if debug.Sort == "" {
+	if debug.Sort == "" { // 默认按照创建时间从新到旧排
 		debug.Sort = "created_at desc"
 	}
-	err = db.Limit(debug.PageSize).Offset(offset).Find(&list).Order(debug.Sort).Error
+	err = db.Where(model).Limit(debug.PageSize).Offset(offset).Order(debug.Sort).Find(&list).Error
 	return list, count, err
 }

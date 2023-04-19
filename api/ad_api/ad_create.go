@@ -1,4 +1,4 @@
-package adver_api
+package ad_api
 
 import (
 	"gin_vue_blog_AfterEnd/global"
@@ -8,15 +8,16 @@ import (
 )
 
 type AdRequest struct {
-	Title     string `json:"title"  binding:"required" msg:"请输入标题"`
-	Href      string `json:"href"  binding:"required,url" msg:"跳转链接非法"`
-	ImagePath string `json:"image_path"  binding:"required,url" msg:"图片地址非法"`
-	IsShow    bool   `json:"is_show"  binding:"required" msg:"选择是否展示"`
+	Title     string `json:"title"  binding:"required" msg:"请输入标题" structs:"title"`
+	Href      string `json:"href"  binding:"required,url" msg:"跳转链接非法" structs:"href"`             // 标识了这个字段必填，且为合法的URL
+	ImagePath string `json:"image_path"  binding:"required,url" msg:"图片地址非法" structs:"image_path"` // 标识了这个字段必填，且为合法的URL
+	IsShow    bool   `json:"is_show"  default:"false" msg:"选择是否展示" structs:"is_show"`
 }
 
 func (AdApi) AdCreateView(c *gin.Context) {
 	var adReq AdRequest
 	err := c.ShouldBindJSON(&adReq)
+	// 判断跳转链接是否合法
 	if err != nil {
 		response.FailBecauseOfParamError(err, &adReq, c)
 		return
@@ -29,8 +30,6 @@ func (AdApi) AdCreateView(c *gin.Context) {
 		response.FailWithMessage("相同的广告已存在", c)
 		return
 	}
-
-	// 判断跳转链接是否合法
 
 	err = global.Db.Create(&model.AdModel{
 		Title:     adReq.Title,

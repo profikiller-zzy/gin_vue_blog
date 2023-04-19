@@ -1039,3 +1039,101 @@ func GenerateFileUploadReq(filePath string, isSuccess bool, msg string) (req mod
 }
 
 ```
+
+## 广告管理
+
+### 添加广告
+其中`binding`标签为`required,url`标识了这个字段在请求中必填，且为合法的URL，在进行参数校验的时候，如果`c.ShouldBindJSON(&adReq)`返回了类型为`validator.ValidationErrors`的error，则代表参数校验错误，直接返回标签为`msg`中的报错信息  
+```azure
+package ad_api
+
+import (
+	"gin_vue_blog_AfterEnd/global"
+	"gin_vue_blog_AfterEnd/model"
+	"gin_vue_blog_AfterEnd/model/response"
+	"github.com/gin-gonic/gin"
+)
+
+type AdRequest struct {
+	Title     string `json:"title"  binding:"required" msg:"请输入标题"`
+	Href      string `json:"href"  binding:"required,url" msg:"跳转链接非法"`
+	ImagePath string `json:"image_path"  binding:"required,url" msg:"图片地址非法"`
+	IsShow    bool   `json:"is_show"  binding:"required" msg:"选择是否展示"`
+}
+
+func (AdApi) AdCreateView(c *gin.Context) {
+	var adReq AdRequest
+	err := c.ShouldBindJSON(&adReq)
+	if err != nil {
+		response.FailBecauseOfParamError(err, &adReq, c)
+		return
+	}
+
+	// 需要判断广告是否重复，联合广告的标题和跳转链接
+	var adModel model.AdModel
+	err = global.Db.First(&adModel, "title = ? and href = ?", adReq.Title, adReq.Href).Error
+	if err == nil { // 找到了符合条件的记录
+		response.FailWithMessage("相同的广告已存在", c)
+		return
+	}
+
+	// 判断跳转链接是否合法
+
+	err = global.Db.Create(&model.AdModel{
+		Title:     adReq.Title,
+		Href:      adReq.Href,
+		ImagePath: adReq.ImagePath,
+		IsShow:    adReq.IsShow,
+	}).Error
+
+	if err != nil {
+		global.Log.Error(err.Error())
+		response.FailWithMessage("添加广告失败", c)
+		return
+	}
+	response.OKWithMessage("添加广告成功", c)
+}
+
+```
+
+### 获取广告列表
+注意，在HTTP请求Header中有一个字段为`Referer`的字段，该字段指示了请求的来源，由浏览器添加，可以在`Referer`判断这个请求是不是来自管理员页面，方法是获取`Referer`的URL，判断这个string中是否含有`admin`关键字，如果请求来自管理员页面，则将查询到的所有广告记录返回；若果不是，则只返回`is_show`为`true`的记录，做到差异化数据展示。  
+gorm的特性，代码中如果判断来源是`admin`则将`isShow`条件改为`false`，此时夹带参数`isShow`=`false`查询数据库时，`isShow`字段回直接被忽略，从而导致所有记录都会返回  
+```azure
+package ad_api
+
+import (
+	"fmt"
+	"gin_vue_blog_AfterEnd/model"
+	"gin_vue_blog_AfterEnd/model/response"
+	"gin_vue_blog_AfterEnd/service/common_service"
+	"github.com/gin-gonic/gin"
+	"strings"
+)
+
+func (AdApi) AdListView(c *gin.Context) {
+	var pageModel model.PageInfo
+	err := c.ShouldBindQuery(&pageModel)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("参数绑定失败，error：%s", err.Error()), c)
+		return
+	}
+
+	var adList []model.AdModel
+	var count int64
+	referer := c.GetHeader("Referer")
+	isShow := true
+	if strings.Contains(referer, "admin") { // 请求是从admin来的
+		isShow = false
+	}
+	adList, count, err = common_service.PagingList(model.AdModel{IsShow: isShow}, common_service.PageInfoDebug{
+		PageInfo: pageModel,
+		Debug:    true,
+	})
+
+	// 判断 referer (来源)中是否包含 admin(管理员)，如果包含则将所有广告返回，如果不是，则只需要将 is_show=true 的广告返回即可
+	response.OKWithPagingData(adList, count, c)
+	return
+}
+
+```

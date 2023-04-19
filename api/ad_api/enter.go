@@ -1,4 +1,4 @@
-package adver_api
+package ad_api
 
 type AdApi struct {
 }
