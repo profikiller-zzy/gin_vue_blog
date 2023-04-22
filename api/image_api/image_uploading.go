@@ -9,6 +9,14 @@ import (
 )
 
 // ImageUploadingView 上传图片并将图片保存在uploads文件夹中
+//
+//		@Tags			图片管理
+//		@Summary		上传多个图片
+//		@description	上传多个图片
+//		@param			image formData file true "需要上传的图片文件"
+//		@Router			/api/image/ [POST]
+//	 	@Success       	200	{object}	response.Response{Date=[]model.FileUploadResponse}
+//		@Failure		500	{object}	response.Response
 func (ImageApi) ImageUploadingView(c *gin.Context) {
 	form, err := c.MultipartForm()
 	if err != nil {

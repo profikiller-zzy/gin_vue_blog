@@ -1,0 +1,395 @@
+basePath: /
+definitions:
+  ad_api.AdRequest:
+    properties:
+      href:
+        description: 标识了这个字段必填，且为合法的URL
+        type: string
+      image_path:
+        description: 标识了这个字段必填，且为合法的URL
+        type: string
+      is_show:
+        default: false
+        type: boolean
+      title:
+        type: string
+    required:
+    - href
+    - image_path
+    - title
+    type: object
+  image_api.ImageResponse:
+    properties:
+      id:
+        type: integer
+      name:
+        description: 图片的名称
+        type: string
+      path:
+        description: 图片URL，如果存储在本地则为图片路径，存储在云服务器上则是图片链接
+        type: string
+    type: object
+  image_api.ImageUpdateRequest:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  model.AdModel:
+    properties:
+      created_at:
+        description: 创建时间
+        type: string
+      href:
+        description: 广告的跳转连接
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      image_path:
+        description: 图片的URL
+        type: string
+      is_show:
+        description: 是否展示
+        type: boolean
+      title:
+        description: 广告的标题
+        type: string
+      updated_at:
+        description: 更新时间
+        type: string
+    type: object
+  model.BannerModel:
+    properties:
+      created_at:
+        description: 创建时间
+        type: string
+      hash:
+        description: 图片的Hash值，用以判断重复图片
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      image_storage_mode:
+        description: 图片的存储方式，可以存储在本地或七牛云服务器上
+        type: integer
+      name:
+        description: 图片的名称
+        type: string
+      path:
+        description: 图片URL，如果存储在本地则为图片路径，存储在云服务器上则是图片链接
+        type: string
+      updated_at:
+        description: 更新时间
+        type: string
+    type: object
+  model.FileUploadResponse:
+    properties:
+      file_path:
+        description: 图片上传成功则返回图片文件路径(本地路径或是URL)，上传失败返回上传文件的名称
+        type: string
+      is_success:
+        description: 是否上传成功
+        type: boolean
+      msg:
+        description: 返回信息
+        type: string
+    type: object
+  model.RemoveRequest:
+    properties:
+      id_list:
+        items:
+          type: integer
+        type: array
+    type: object
+  response.ListResponse-model_AdModel:
+    properties:
+      count:
+        type: integer
+      data_list:
+        items:
+          $ref: '#/definitions/model.AdModel'
+        type: array
+    type: object
+  response.ListResponse-model_BannerModel:
+    properties:
+      count:
+        type: integer
+      data_list:
+        items:
+          $ref: '#/definitions/model.BannerModel'
+        type: array
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: 127.0.0.1:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: gvb API文档
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: API 文档
+  version: "1.0"
+paths:
+  /api/advertise/:
+    delete:
+      description: 删除广告
+      parameters:
+      - description: 需要删除的广告ID列表
+        in: body
+        name: rmReq
+        required: true
+        schema:
+          $ref: '#/definitions/model.RemoveRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 删除广告
+      tags:
+      - 广告管理
+    get:
+      description: 查询广告列表
+      parameters:
+      - in: query
+        name: key
+        type: string
+      - description: 当前页码
+        in: query
+        name: page_num
+        type: integer
+      - description: 每一页显示多少数据项
+        in: query
+        name: page_size
+        type: integer
+      - description: Sort类型为string，用于在查询返回列表时指定按照什么进行排序(创建时间、主键、更新时间等等) 默认按照创建时间从新到旧排
+        in: query
+        name: sort
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                Data:
+                  $ref: '#/definitions/response.ListResponse-model_AdModel'
+              type: object
+      summary: 查询广告列表
+      tags:
+      - 广告管理
+    post:
+      description: 创建广告
+      parameters:
+      - description: 需要创建广告的基本信息
+        in: body
+        name: adReq
+        required: true
+        schema:
+          $ref: '#/definitions/ad_api.AdRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 创建广告
+      tags:
+      - 广告管理
+  /api/advertise/:id:
+    put:
+      description: 更新特定广告信息
+      parameters:
+      - description: 需要更新的广告ID
+        in: path
+        name: adID
+        required: true
+        type: integer
+      - description: 更新后的广告信息
+        in: body
+        name: adReq
+        required: true
+        schema:
+          $ref: '#/definitions/ad_api.AdRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                Data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                Data:
+                  type: string
+              type: object
+      summary: 更新特定广告信息
+      tags:
+      - 广告管理
+  /api/image/:
+    delete:
+      description: 删除广告
+      parameters:
+      - description: 需要删除的广告ID列表
+        in: body
+        name: rmReq
+        required: true
+        schema:
+          $ref: '#/definitions/model.RemoveRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 删除广告
+      tags:
+      - 图片管理
+    get:
+      description: 获取图片列表
+      parameters:
+      - in: query
+        name: key
+        type: string
+      - description: 当前页码
+        in: query
+        name: page_num
+        type: integer
+      - description: 每一页显示多少数据项
+        in: query
+        name: page_size
+        type: integer
+      - description: Sort类型为string，用于在查询返回列表时指定按照什么进行排序(创建时间、主键、更新时间等等) 默认按照创建时间从新到旧排
+        in: query
+        name: sort
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                Data:
+                  $ref: '#/definitions/response.ListResponse-model_BannerModel'
+              type: object
+      summary: 获取图片列表
+      tags:
+      - 图片管理
+    post:
+      description: 上传多个图片
+      parameters:
+      - description: 需要上传的图片文件
+        in: formData
+        name: image
+        required: true
+        type: file
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                Date:
+                  items:
+                    $ref: '#/definitions/model.FileUploadResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 上传多个图片
+      tags:
+      - 图片管理
+    put:
+      description: 更新特定图片信息
+      parameters:
+      - description: 更新后的图片信息
+        in: body
+        name: iuReq
+        required: true
+        schema:
+          $ref: '#/definitions/image_api.ImageUpdateRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 更新特定图片信息
+      tags:
+      - 图片管理
+  /api/imageList/:
+    get:
+      description: 获取信息简略的图片列表
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                Data:
+                  items:
+                    $ref: '#/definitions/image_api.ImageResponse'
+                  type: array
+              type: object
+      summary: 获取信息简略的图片列表
+      tags:
+      - 图片管理
+  /api/menu/:
+    post:
+      description: 创建菜单项目
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 创建菜单项目
+      tags:
+      - 菜单管理
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

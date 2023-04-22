@@ -3,6 +3,8 @@ package router
 import (
 	"gin_vue_blog_AfterEnd/global"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type RGroup struct {
@@ -17,6 +19,9 @@ func InitRouter() *gin.Engine {
 		global.Log.Warnln(err.Error())
 	}
 
+	// use ginSwagger middleware to serve the API docs
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	apiRouter := router.Group("/api/")
 
 	apiRouterGroupApp := RGroup{
@@ -25,5 +30,6 @@ func InitRouter() *gin.Engine {
 	apiRouterGroupApp.SettingRouter()
 	apiRouterGroupApp.ImageRouter()
 	apiRouterGroupApp.AdRouter()
+	apiRouterGroupApp.MenuRouter()
 	return router
 }

@@ -8,6 +8,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// AdRemoveView 删除广告
+//
+//		@Tags			图片管理
+//		@Summary		删除广告
+//		@description	删除广告
+//		@param			rmReq body model.RemoveRequest true "需要删除的广告ID列表"
+//		@Router			/api/image/ [DELETE]
+//	 	@Success       	200	{object}	response.Response
+//		@Failure		500	{object}	response.Response
 func (AdApi) AdRemoveView(c *gin.Context) {
 	var rmReq model.RemoveRequest
 	var adList []model.AdModel

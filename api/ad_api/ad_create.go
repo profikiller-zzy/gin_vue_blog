@@ -14,6 +14,15 @@ type AdRequest struct {
 	IsShow    bool   `json:"is_show"  default:"false" msg:"选择是否展示" structs:"is_show"`
 }
 
+// AdCreateView 创建广告
+//
+//		@Tags			广告管理
+//		@Summary		创建广告
+//		@description	创建广告
+//		@param			adReq body AdRequest true "需要创建广告的基本信息"
+//		@Router			/api/advertise/ [POST]
+//	 	@Success       	200	{object}	response.Response
+//		@Failure		500	{object}	response.Response
 func (AdApi) AdCreateView(c *gin.Context) {
 	var adReq AdRequest
 	err := c.ShouldBindJSON(&adReq)

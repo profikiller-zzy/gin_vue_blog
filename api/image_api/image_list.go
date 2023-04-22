@@ -1,28 +1,28 @@
 package image_api
 
 import (
-	"fmt"
+	"gin_vue_blog_AfterEnd/global"
 	"gin_vue_blog_AfterEnd/model"
 	"gin_vue_blog_AfterEnd/model/response"
-	"gin_vue_blog_AfterEnd/service/common_service"
 	"github.com/gin-gonic/gin"
 )
 
-func (ImageApi) ImageListView(c *gin.Context) {
-	var pageModel model.PageInfo
-	err := c.ShouldBindQuery(&pageModel)
-	if err != nil {
-		response.FailWithMessage(fmt.Sprintf("参数绑定失败，error：%s", err.Error()), c)
-		return
-	}
+type ImageResponse struct {
+	ID   uint   `json:"id"`
+	Path string `json:"path"` // 图片URL，如果存储在本地则为图片路径，存储在云服务器上则是图片链接
+	Name string `json:"name"` // 图片的名称
+}
 
-	var imageList []model.BannerModel
-	var count int64
-	// 对图片列表进行分页
-	imageList, count, err = common_service.PagingList(model.BannerModel{}, common_service.PageInfoDebug{
-		PageInfo: pageModel,
-		Debug:    true,
-	})
-	response.OKWithPagingData(imageList, count, c)
-	return
+// ImageList 返回信息简略的图片列表
+//
+//		@Tags			图片管理
+//		@Summary		获取信息简略的图片列表
+//		@description	获取信息简略的图片列表
+//		@Router			/api/imageList/ [GET]
+//	 	@Success       	200	{object}	response.Response{Data=[]ImageResponse}
+func (ImageApi) ImageList(c *gin.Context) {
+	var imageList []ImageResponse
+
+	global.Db.Model(&model.BannerModel{}).Select("id", "path", "name").Scan(&imageList)
+	response.OKWithData(imageList, c)
 }

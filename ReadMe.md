@@ -1137,3 +1137,59 @@ func (AdApi) AdListView(c *gin.Context) {
 }
 
 ```
+
+### 修改广告记录
+
+```azure
+package ad_api
+
+import (
+	"gin_vue_blog_AfterEnd/global"
+	"gin_vue_blog_AfterEnd/model"
+	"gin_vue_blog_AfterEnd/model/response"
+	"github.com/fatih/structs"
+	"github.com/gin-gonic/gin"
+)
+
+func (AdApi) AdUpdateView(c *gin.Context) {
+	var adReq AdRequest
+	id := c.Param("id")
+	err := c.ShouldBindJSON(&adReq)
+	// 判断跳转链接是否合法
+	if err != nil {
+		response.FailBecauseOfParamError(err, &adReq, c)
+		return
+	}
+
+	var adModel model.AdModel
+	err = global.Db.First(&adModel, "id = ?", id).Error
+	if err != nil { // 没有找到符合条件的记录
+		response.FailWithMessage("该广告不存在", c)
+		return
+	}
+
+	// 结构体转map
+	adReqMap := structs.Map(&adReq)
+	err = global.Db.Model(&adModel).Updates(adReqMap).Error
+
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OKWithMessage("修改广告成功", c)
+}
+```
+
+## swag集成
+
+参照[快速开始swag生成Restful API文档](https://github.com/swaggo/swag/blob/master/README_zh-CN.md#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)  
+注意生成的项目访问连接问[API文档](http://localhost:8080/swagger/index.html) 注意端口号是否正确  
+
+首先确保你的电脑安装了swag，是否安装swag可以打开cmd，输入`swag`然后回车，如果没有配置信息打印则没有安装swag.  
+使用如下命令下载并安装swag：  
+`go install github.com/swaggo/swag/cmd/swag@latest`  
+下载依赖：  
+`go get "github.com/swaggo/gin-swagger"`  
+`go get "github.com/swaggo/files"`
+
+## 代码平滑重启

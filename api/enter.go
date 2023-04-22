@@ -1,8 +1,11 @@
 package api
 
+// gin-swagger middleware
+// swagger embed files
 import (
 	"gin_vue_blog_AfterEnd/api/ad_api"
 	"gin_vue_blog_AfterEnd/api/image_api"
+	"gin_vue_blog_AfterEnd/api/menu_api"
 	"gin_vue_blog_AfterEnd/api/setting_api"
 )
 
@@ -11,6 +14,7 @@ type ApiGroup struct {
 	SettingApi setting_api.SettingApi
 	ImageApi   image_api.ImageApi
 	AdAPI      ad_api.AdApi
+	MenuApi    menu_api.MenuApi
 }
 
 // ApiGroupApp 实例化ApiGroup对象

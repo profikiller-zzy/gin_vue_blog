@@ -12,7 +12,7 @@ func MakeMigration() {
 	if err != nil {
 		global.Log.Warn(err.Error())
 	}
-	err = global.Db.SetupJoinTable(&model.MenuModel{}, "MenuBanner", &model.MenuBanner{})
+	err = global.Db.SetupJoinTable(&model.MenuModel{}, "Banners", &model.MenuBanner{})
 	if err != nil {
 		global.Log.Warn(err.Error())
 	}

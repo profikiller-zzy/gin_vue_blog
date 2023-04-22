@@ -9,6 +9,14 @@ import (
 	"strings"
 )
 
+// AdListView 查询广告列表
+//
+//		@Tags			广告管理
+//		@Summary		查询广告列表
+//		@description	查询广告列表
+//		@param			adReq query model.PageInfo false "查询参数"
+//		@Router			/api/advertise/ [GET]
+//	 	@Success       	200	{object}	response.Response{Data=response.ListResponse[model.AdModel]}
 func (AdApi) AdListView(c *gin.Context) {
 	var pageModel model.PageInfo
 	err := c.ShouldBindQuery(&pageModel)
