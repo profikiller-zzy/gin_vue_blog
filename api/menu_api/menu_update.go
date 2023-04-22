@@ -8,6 +8,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// MenuUpdateView 更新指定菜单项
+//
+//		@Tags			菜单管理
+//		@Summary		更新指定菜单项
+//		@description	更新指定菜单项
+//		@param			mnID path int true "需要更新的菜单ID"
+//		@param			mnReq body MenuRequest true "更新后的广告信息"
+//		@Router			/api/menu/ [POST]
+//	 	@Success       	200	{object}	response.Response{}
 func (MenuApi) MenuUpdateView(c *gin.Context) {
 	var mnReq MenuRequest
 	id := c.Param("id")

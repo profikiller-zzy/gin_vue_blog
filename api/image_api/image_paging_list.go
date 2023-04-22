@@ -24,7 +24,7 @@ func (ImageApi) ImagePagingListView(c *gin.Context) {
 		return
 	}
 
-	var imageList []model.BannerModel
+	var imageList = make([]model.BannerModel, 0)
 	var count int64
 	// 对图片列表进行分页
 	imageList, count, err = common_service.PagingList(model.BannerModel{}, common_service.PageInfoDebug{

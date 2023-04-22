@@ -32,7 +32,7 @@ func (MenuApi) MenuListView(c *gin.Context) {
 	// 查询menu和banner的中间表
 	var menuBannerList = make([]model.MenuBanner, 0)
 	global.Db.Preload("BannerModel").Order("sort desc").Find(&menuBannerList, menuIDList)
-	var menuListRep []MenuResponse
+	var menuListRep = make([]MenuResponse, 0)
 	for _, menu := range menuList {
 		// 这里需要对查询出来的每个菜单项目，使用该菜单项目的ID去联合中间表查出它关联的图片，并且将其写入到MenuListRep中
 		// banners即menu对应的图片列表，并且以sort递减排序

@@ -21,7 +21,7 @@ type ImageResponse struct {
 //		@Router			/api/imageList/ [GET]
 //	 	@Success       	200	{object}	response.Response{Data=[]ImageResponse}
 func (ImageApi) ImageList(c *gin.Context) {
-	var imageList []ImageResponse
+	var imageList = make([]ImageResponse, 0)
 
 	global.Db.Model(&model.BannerModel{}).Select("id", "path", "name").Scan(&imageList)
 	response.OKWithData(imageList, c)

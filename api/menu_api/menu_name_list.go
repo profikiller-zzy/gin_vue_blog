@@ -13,6 +13,13 @@ type MenuNameResponse struct {
 	Path  string `json:"path"`
 }
 
+// MenuNameList 图片名称列表
+//
+//		@Tags			菜单管理
+//		@Summary		获取图片名称列表
+//		@description	获取图片名称列表
+//		@Router			/api/menu_name/ [GET]
+//	 	@Success       	200	{object}	response.Response{Data=[]MenuNameResponse}
 func (MenuApi) MenuNameList(c *gin.Context) {
 	var menuNameRepList []MenuNameResponse
 	global.Db.Model(model.MenuModel{}).Select("id", "title", "path").Scan(&menuNameRepList)

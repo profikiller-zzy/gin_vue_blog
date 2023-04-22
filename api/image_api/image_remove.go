@@ -6,6 +6,7 @@ import (
 	"gin_vue_blog_AfterEnd/model"
 	"gin_vue_blog_AfterEnd/model/response"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // ImageRemoveView 删除图片
@@ -33,6 +34,28 @@ func (ImageApi) ImageRemoveView(c *gin.Context) {
 		response.FailWithMessage("文件不存在", c)
 		return
 	}
-	global.Db.Delete(&model.BannerModel{}, rmReq.IDList)
+
+	var IDList = make([]uint, count)
+	for index, image := range imageList {
+		IDList[index] = image.ID
+	}
+	err = global.Db.Transaction(func(tx *gorm.DB) error {
+		// 先将该菜单项的关联图片清空
+		err = global.Db.Where("banner_id in ?", IDList).Delete(&model.MenuBanner{}).Error
+		if err != nil {
+			return err
+		}
+		// 再删除对应的菜单项列表
+		err = global.Db.Delete(&model.BannerModel{}, IDList).Error
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		global.Log.Error(err.Error())
+		response.FailWithMessage(fmt.Sprintf("删除图片失败, 错误信息:%s", err.Error()), c)
+		return
+	}
 	response.FailWithMessage(fmt.Sprintf("删除 %d 张图片成功", count), c)
 }
