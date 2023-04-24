@@ -9,5 +9,5 @@ const (
 
 var CodeMessage = map[ErrorCode]string{
 	SettingsError:  "系统错误",
-	ParameterError: "系统参数错误",
+	ParameterError: "参数错误",
 }
