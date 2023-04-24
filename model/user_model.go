@@ -10,7 +10,7 @@ import (
 type UserModel struct {
 	MODEL
 	NickName      string           `gorm:"size:36" json:"nick_name"`                                                       // 昵称
-	UserName      string           `gorm:"size:36" json:"user_name"`                                                       // 用户名
+	UserName      string           `gorm:"size:36" json:"user_name"`                                                       // 用户名，具有唯一性
 	Password      string           `gorm:"size:128" json:"password"`                                                       // 密码
 	Avatar        string           `gorm:"size:256" json:"avatar"`                                                         // 头像地址
 	Email         string           `gorm:"size:128" json:"email"`                                                          // 邮箱地址

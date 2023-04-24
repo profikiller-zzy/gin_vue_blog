@@ -56,6 +56,6 @@ qi_niu:
   zone: cn-east-2
   size: 5
 jwt:
-  secret_key: xx
-  expire_time: 0
-  issuer: xx
+  secret_key: 1hwrmabS45PaYmDb
+  expire_time: 2
+  issuer: profikiller
