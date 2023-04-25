@@ -9,7 +9,8 @@ import (
 func (r RGroup) UserRouter() {
 	userApiApp := api.ApiGroupApp.UserApi
 	r.POST("/email_login/", userApiApp.EmailLoginView)
+	r.POST("/logout/", middleware.JwtAuth(), userApiApp.UserLogoutView)
 	r.GET("/user/", middleware.JwtAuth(), userApiApp.UserListView)
-	r.PUT("user_role", middleware.JwtAuth(), userApiApp.UserUpdateRoleView)
-	r.PUT("user_password", middleware.JwtAuth(), userApiApp.UserUpdatePasswordView)
+	r.PUT("/user_role/", middleware.JwtAuth(), userApiApp.UserUpdateRoleView)
+	r.PUT("/user_password/", middleware.JwtAuth(), userApiApp.UserUpdatePasswordView)
 }

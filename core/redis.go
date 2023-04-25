@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gin_vue_blog_AfterEnd/global"
 	"github.com/go-redis/redis"
+	"time"
 )
 
 // 声明一个全局的rdb变量
@@ -15,10 +16,11 @@ func InitRedis() *redis.Client {
 func connectRedisDB(db int) *redis.Client {
 	var confRedis = global.Config.Redis
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     confRedis.ReturnAddr(),
-		Password: confRedis.Password,
-		DB:       db,
-		PoolSize: confRedis.PoolSize,
+		Addr:               confRedis.ReturnAddr(),
+		Password:           confRedis.Password,
+		DB:                 db,
+		PoolSize:           confRedis.PoolSize,
+		IdleCheckFrequency: time.Second, // 每秒钟检查记录是否过期
 	})
 
 	_, err := rdb.Ping().Result()
