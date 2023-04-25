@@ -6,7 +6,9 @@ import (
 	_ "gin_vue_blog_AfterEnd/docs"
 	"gin_vue_blog_AfterEnd/flag"
 	"gin_vue_blog_AfterEnd/global"
+	"gin_vue_blog_AfterEnd/model/ctype"
 	"gin_vue_blog_AfterEnd/router"
+	"gin_vue_blog_AfterEnd/service/user_service"
 )
 
 // @title           API 文档
@@ -40,6 +42,12 @@ func main() {
 	r := router.InitRouter()
 	global.Log.Info(fmt.Sprintf("gvb_sever 运行在:%s", global.Config.System.Addr()))
 
+	user_service.UserService{}.CreateUser("profikiller", "张三", "01312934a", ctype.PermissionAdmin, "3548361574@qq.com", "127.0.0.1")
+
+	//var user model.UserModel
+	//global.Db.First(&user)
+	//fmt.Println(user)
+	//fmt.Println(user.Role)
 	// 捕获命令行参数，并对不同命令行参数的值来执行不同的操作
 	flag.Parse()
 	err := r.Run(global.Config.System.Addr())

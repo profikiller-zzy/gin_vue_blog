@@ -5,7 +5,7 @@ import (
 	"gin_vue_blog_AfterEnd/global"
 	"gin_vue_blog_AfterEnd/model"
 	"gin_vue_blog_AfterEnd/model/ctype"
-	"gin_vue_blog_AfterEnd/utils/pwd"
+	"gin_vue_blog_AfterEnd/service/user_service"
 )
 
 func CreateUser(permission string) {
@@ -43,27 +43,11 @@ func CreateUser(permission string) {
 	}
 	fmt.Println("请输入邮箱地址：(没有的话按回车直接跳过)")
 	fmt.Scan(&email)
-	role := ctype.PermissionUser
+	var role ctype.Role = ctype.PermissionUser
 	if permission == "admin" {
 		role = ctype.PermissionAdmin
 	}
-	avatar := "uploads/avatar/default.png"
-
-	// 对密码进行加密
-	hashPwd := pwd.BcryptPw(password)
-
-	//创建用户
-	err = global.Db.Create(&model.UserModel{
-		NickName:   nickName,
-		UserName:   userName,
-		Password:   hashPwd,
-		Email:      email,
-		Role:       ctype.Role(role),
-		Avatar:     avatar,
-		IP:         "127.0.0.1",
-		Addr:       "内网地址",
-		SignStatus: ctype.SignEmail,
-	}).Error
+	err = user_service.UserService{}.CreateUser(userName, nickName, password, role, email, "127.0.0.1")
 	if err != nil {
 		global.Log.Error(err.Error())
 		return

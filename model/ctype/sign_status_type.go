@@ -5,9 +5,9 @@ import "encoding/json"
 type SignStatus int
 
 const (
-	SignQQ    = 1 // QQ注册
-	SignEmail = 2 // 邮箱注册
-	SignGitee = 3 // Gitee注册
+	SignQQ    SignStatus = 1 // QQ注册
+	SignEmail SignStatus = 2 // 邮箱注册
+	SignGitee SignStatus = 3 // Gitee注册
 )
 
 func (s SignStatus) MarshalJSON() ([]byte, error) {

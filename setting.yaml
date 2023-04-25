@@ -1,7 +1,7 @@
 mysql:
   host: localhost
   port: 3306
-  db: gin_vue_blog
+  db: gin_vue_blog2
   user: root
   password: 01312934a
   log_level: debug
@@ -15,7 +15,7 @@ logger:
 system:
   host: 127.0.0.1
   port: 8080
-  env: debug
+  env: release
 save_upload:
   size: 2
   path: uploads/image_file

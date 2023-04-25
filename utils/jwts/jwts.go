@@ -38,7 +38,7 @@ func GenerateToken(payLoad JwtPayLoad) (string, error) {
 func VerifyToken(tokenString string) (*CustomClaims, error) {
 	JwtSecretKey = []byte(global.Config.Jwt.SecretKey)
 	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(JwtSecretKey), nil
+		return JwtSecretKey, nil
 	})
 
 	if err != nil {

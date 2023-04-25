@@ -18,8 +18,8 @@ type UserModel struct {
 	Addr          string           `gorm:"size:64" json:"addr"`                                                            // 地址
 	Token         string           `gorm:"size:128" json:"token"`                                                          // 其他平台的登录认证
 	IP            string           `gorm:"size:20" json:"ip"`                                                              // ip地址
-	Role          ctype.Role       `gorm:"size:4;default:1" json:"role"`                                                   // 角色：1 管理员 2 普通用户 3 游客
-	SignStatus    ctype.SignStatus `gorm:"smallint(6)" json:"sign_status"`                                                 // 注册方式
+	Role          ctype.Role       `gorm:"size:16;" json:"role,select(info)"`                                              // 角色：1 管理员 2 普通用户 3 游客
+	SignStatus    ctype.SignStatus `gorm:"size:16" json:"sign_status,select(info)"`                                        // 注册方式
 	ArticleModels []ArticleModel   `gorm:"foreignKey:UserID;foreignKey:ID;joinForeignKey:ArticleID" json:"-"`              // 发布的文章列表
 	CollectModels []ArticleModel   `gorm:"many2many:user_collect;joinForeignKey:UserID;joinReferences:ArticleID" json:"-"` // 收藏的文章列表，用户-收藏文章为自定义多对多
 }

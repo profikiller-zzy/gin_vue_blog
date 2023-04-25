@@ -5,8 +5,8 @@ import "encoding/json"
 type ImageStorageMode int
 
 const (
-	Local = 1 // 将图片存储在本地
-	QiNiu = 2 // 将图片存储在七牛云服务器
+	Local ImageStorageMode = 1 // 将图片存储在本地
+	QiNiu ImageStorageMode = 2 // 将图片存储在七牛云服务器
 )
 
 func (i ImageStorageMode) MarshalJSON() ([]byte, error) {
