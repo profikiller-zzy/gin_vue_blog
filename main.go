@@ -37,6 +37,8 @@ func main() {
 	global.Log = core.InitLogger()
 	// 连接mysql数据库，并将数据库写入全局变量
 	global.Db = core.InitGorm()
+	// 连接redis数据库，并将数据库写入全局变量
+	global.Redis = core.InitRedis()
 
 	// 初始化gin路由引擎
 	r := router.InitRouter()

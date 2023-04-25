@@ -2,6 +2,7 @@ package global
 
 import (
 	"gin_vue_blog_AfterEnd/config"
+	"github.com/go-redis/redis"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -12,4 +13,5 @@ var (
 	Db       *gorm.DB
 	Log      *logrus.Logger
 	MysqlLog logger.Interface
+	Redis    *redis.Client
 )
