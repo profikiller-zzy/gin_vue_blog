@@ -1,8 +1,8 @@
 package config
 
 type Email struct {
-	Host             string `yaml:"host" json:"host"`
-	Port             string `yaml:"port" json:"port"`
+	Host             string `yaml:"host" json:"host"` // SMTP 服务器地址
+	Port             int    `yaml:"port" json:"port"`
 	User             string `yaml:"user" json:""`
 	Password         string `yaml:"password" json:"user"`
 	DefaultFormEmail string `yaml:"default_form_email" json:"default_form_email"` // 默认发件人名称

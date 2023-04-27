@@ -57,7 +57,7 @@ func JwtAdmin() gin.HandlerFunc {
 		}
 		// 判断该token是否在redis黑名单中
 		isInvalid, err := service.ServiceApp.UserServiceApp.CheckTokenInBlackList(tokenString)
-		if !isInvalid && err == nil {
+		if isInvalid && err == nil {
 			response.FailWithMessage("该token已失效，请重新登录", c)
 			c.Abort()
 			return

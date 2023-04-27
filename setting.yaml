@@ -36,14 +36,14 @@ site_info:
   gitee_Url: 暂无
   github_url: https://github.com/profikiller-zzy/gin_vue_blog
 qq:
-  app_id: "200301312934"
+  app_id: xxx
   key: qqkey
   redirect: http://127.0.0.1:8080/api/setting/
 email:
-  host: localhost
-  port: "8080"
-  user: ""
-  password: 3548361574@qq.com
+  host: smtp.qq.com
+  port: 465
+  user: 3548361574@qq.com
+  password: yttwuqhzhnnkdadh
   default_form_email: profikiller
   use_ssl: true
   user_tsl: false

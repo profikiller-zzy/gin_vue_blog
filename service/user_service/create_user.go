@@ -8,7 +8,7 @@ import (
 	"gin_vue_blog_AfterEnd/utils/pwd"
 )
 
-const Avatar = "/uploads/avatar/default.png"
+const Avatar = "/uploads/avatar/default.png" // 默认的头像地址
 
 func (UserService) CreateUser(userName, nickName, password string, role ctype.Role, email string, ip string) error {
 	// 判断用户名是否存在

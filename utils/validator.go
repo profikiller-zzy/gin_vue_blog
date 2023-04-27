@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-// GetMsgLabel 返回结构体中标签为msg中的内容
+// GetMsgLabel 对参数进行校验，将产生error的字段中标签为`msg`的内容返回
 func GetMsgLabel(err error, obj interface{}) string {
 	// 使用时，应该传入结构体的指针
 	objType := reflect.TypeOf(obj)
