@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// AddInvalidTokenToBlackList 将失效的token加入黑名单
+// AddInvalidTokenToBlackList 将注销后失效的token加入黑名单
 func (UserService) AddInvalidTokenToBlackList(tokenString string, duration time.Duration) error {
 	err := global.Redis.Set(fmt.Sprintf("logout_%s", tokenString), "", duration).Err()
 	return err

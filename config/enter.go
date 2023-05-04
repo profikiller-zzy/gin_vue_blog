@@ -12,4 +12,5 @@ type Config struct {
 	QiNiu      QiNiu      `yaml:"qi_niu"`
 	Jwt        Jwt        `yaml:"jwt"`
 	Redis      Redis      `yaml:"redis"`
+	ES         ES         `yaml:"es"`
 }

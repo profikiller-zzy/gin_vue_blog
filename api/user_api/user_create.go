@@ -17,6 +17,7 @@ type UserCreateRequest struct {
 }
 
 func (UserApi) UserCreateView(c *gin.Context) {
+	// TODO 后续需要对该函数进行逻辑调整，因为登录之后对某人发消息，即本人是发送人
 	var ucReq UserCreateRequest
 	if err := c.ShouldBindJSON(&ucReq); err != nil {
 		response.FailBecauseOfParamError(err, &ucReq, c)

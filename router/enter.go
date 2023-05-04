@@ -32,5 +32,8 @@ func InitRouter() *gin.Engine {
 	apiRouterGroupApp.AdRouter()
 	apiRouterGroupApp.MenuRouter()
 	apiRouterGroupApp.UserRouter()
+	apiRouterGroupApp.TagRouter()
+	apiRouterGroupApp.MessageRouter()
+
 	return router
 }
