@@ -2,21 +2,23 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/sirupsen/logrus"
 )
 
 type DemoModel struct {
-	ID       string `json:"id"`
-	Title    string `json:"title"`
-	UserID   string `json:"user_id"`
-	CreateAt string `json:"create_at"`
+	ID        string `json:"id"`
+	Title     string `json:"title"`
+	Key       string `json:"key"`
+	UserID    uint   `json:"user_id"`
+	CreatedAt string `json:"created_at"`
 }
 
+// Index 返回DemoModel结构体对应的索引名称
 func (DemoModel) Index() string {
 	return "demo_index"
 }
 
+// Mapping 返回DemoModel对应的映射
 func (DemoModel) Mapping() string {
 	return `
 {
@@ -47,33 +49,45 @@ func (DemoModel) Mapping() string {
 `
 }
 
+// IndexExists 索引是否存在
+func (demo DemoModel) IndexExists() bool {
+	exists, err := client.
+		IndexExists(demo.Index()).
+		Do(context.Background())
+	if err != nil {
+		logrus.Error(err.Error())
+		return exists
+	}
+	return exists
+}
+
 // CreateIndex 创建索引
 func (demo DemoModel) CreateIndex() error {
 	if demo.IndexExists() {
 		// 有索引
-		demo.DeleteIndex()
+		demo.RemoveIndex()
 	}
-
 	// 没有索引
+	// 创建索引
 	createIndex, err := client.
 		CreateIndex(demo.Index()).
 		BodyString(demo.Mapping()).
 		Do(context.Background())
 	if err != nil {
-		logrus.Error(fmt.Sprintf("索引创建失败，报错信息：%s", err.Error()))
+		logrus.Error("创建索引失败")
+		logrus.Error(err.Error())
 		return err
 	}
-	// 索引创建成功但未得到确认或是索引创建被es节点拒绝
 	if !createIndex.Acknowledged {
-		logrus.Error("索引创建失败")
+		logrus.Error("创建失败")
 		return err
 	}
-	logrus.Info("索引创建成功!")
+	logrus.Infof("索引 %s 创建成功", demo.Index())
 	return nil
 }
 
-// DeleteIndex 删除索引
-func (demo DemoModel) DeleteIndex() error {
+// RemoveIndex 删除索引
+func (demo DemoModel) RemoveIndex() error {
 	logrus.Info("索引存在，删除索引")
 	// 删除索引
 	indexDelete, err := client.DeleteIndex(demo.Index()).Do(context.Background())
@@ -88,16 +102,4 @@ func (demo DemoModel) DeleteIndex() error {
 	}
 	logrus.Info("索引删除成功")
 	return nil
-}
-
-// IndexExists 索引是否存在
-func (demo DemoModel) IndexExists() bool {
-	isExist, err := client.
-		IndexExists(demo.Index()).
-		Do(context.Background())
-	if err != nil {
-		logrus.Error(err.Error())
-		return isExist
-	}
-	return isExist
 }
