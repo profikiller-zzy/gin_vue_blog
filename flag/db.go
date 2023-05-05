@@ -28,7 +28,6 @@ func MakeMigration() {
 			&model.CommentModel{},
 			&model.MenuBanner{},
 			model.FeedbackModel{},
-			model.CategoryModel{},
 			model.LoginDataModel{})
 	if err != nil {
 		global.Log.Error(err.Error())
