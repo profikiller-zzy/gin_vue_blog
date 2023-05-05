@@ -15,5 +15,5 @@ var (
 	Log      *logrus.Logger
 	MysqlLog logger.Interface
 	Redis    *redis.Client
-	ES       *elastic.Client
+	ESClient *elastic.Client
 )

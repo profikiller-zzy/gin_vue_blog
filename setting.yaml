@@ -1,7 +1,7 @@
 mysql:
   host: localhost
   port: 3306
-  db: gin_vue_blog2
+  db: gvb
   user: root
   password: 01312934a
   log_level: debug

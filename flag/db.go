@@ -8,10 +8,10 @@ import (
 func MakeMigration() {
 	var err error
 	// 自定义多对多关系表
-	err = global.Db.SetupJoinTable(&model.UserModel{}, "CollectModels", &model.UserCollect{})
-	if err != nil {
-		global.Log.Warn(err.Error())
-	}
+	//err = global.Db.SetupJoinTable(&model.UserModel{}, "CollectModels", &model.UserCollect{})
+	//if err != nil {
+	//	global.Log.Warn(err.Error())
+	//}
 	err = global.Db.SetupJoinTable(&model.MenuModel{}, "Banners", &model.MenuBanner{})
 	if err != nil {
 		global.Log.Warn(err.Error())
@@ -21,7 +21,7 @@ func MakeMigration() {
 		AutoMigrate(
 			&model.UserModel{},
 			&model.TagModel{},
-			&model.ArticleModel{},
+			//&model.ArticleModel{}, // ArticleModel存入ES节点，不再存入gorm数据库
 			&model.BannerModel{},
 			&model.MessageModel{},
 			&model.AdModel{},
