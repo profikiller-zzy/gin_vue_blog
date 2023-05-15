@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"net/http"
 )
 
 type RGroup struct {
@@ -18,6 +19,8 @@ func InitRouter() *gin.Engine {
 	if err != nil {
 		global.Log.Warnln(err.Error())
 	}
+
+	router.StaticFS("uploads", http.Dir("uploads"))
 
 	// use ginSwagger middleware to serve the API docs
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

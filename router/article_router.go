@@ -8,4 +8,5 @@ import (
 func (r RGroup) ArticleRouter() {
 	articleApiApp := api.ApiGroupApp.ArticleApi
 	r.PUT("/create_article/", middleware.JwtAuth(), articleApiApp.CreateArticle)
+	r.GET("/article_list/", articleApiApp.ArticleListView)
 }

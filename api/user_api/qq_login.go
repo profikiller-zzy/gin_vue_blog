@@ -53,6 +53,7 @@ func (UserApi) QQLoginView(c *gin.Context) {
 		UserID:   userModel.ID,
 		NickName: userModel.NickName,
 		Role:     int(userModel.Role),
+		Avatar:   userModel.Avatar,
 	})
 	//ip, addr := utils.GetAddrByGin(c)
 	response.OKWithData(tokenString, c)

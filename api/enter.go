@@ -4,7 +4,7 @@ package api
 // swagger embed files
 import (
 	"gin_vue_blog_AfterEnd/api/ad_api"
-	"gin_vue_blog_AfterEnd/api/article"
+	"gin_vue_blog_AfterEnd/api/article_api"
 	"gin_vue_blog_AfterEnd/api/image_api"
 	"gin_vue_blog_AfterEnd/api/menu_api"
 	"gin_vue_blog_AfterEnd/api/message_api"
@@ -22,7 +22,7 @@ type ApiGroup struct {
 	UserApi    user_api.UserApi
 	TagApi     tag_api.TagApi
 	MessageApi message_api.MessageApi
-	ArticleApi article.ArticleApi
+	ArticleApi article_api.ArticleApi
 }
 
 // ApiGroupApp 实例化ApiGroup对象

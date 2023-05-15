@@ -45,7 +45,8 @@ func (UserApi) EmailLoginView(c *gin.Context) {
 		UserID:   userModel.ID,
 		NickName: userModel.NickName,
 		//UserName
-		Role: int(userModel.Role),
+		Role:   int(userModel.Role),
+		Avatar: userModel.Avatar,
 	})
 	if err != nil {
 		global.Log.Warnln(err.Error())

@@ -17,7 +17,7 @@ func (r RGroup) UserRouter() {
 	r.POST("/login/", userApiApp.QQLoginView)
 	r.POST("/user_create/", middleware.JwtAdmin(), userApiApp.UserCreateView)
 	r.POST("/logout/", middleware.JwtAuth(), userApiApp.UserLogoutView)
-	r.GET("/user/", middleware.JwtAuth(), userApiApp.UserListView)
+	r.GET("/user_list/", middleware.JwtAuth(), userApiApp.UserListView)
 	r.PUT("/user_role/", middleware.JwtAuth(), userApiApp.UserUpdateRoleView)
 	r.PUT("/user_password/", middleware.JwtAuth(), userApiApp.UserUpdatePasswordView)
 	r.DELETE("/user_remove/", middleware.JwtAuth(), userApiApp.UserRemoveView)

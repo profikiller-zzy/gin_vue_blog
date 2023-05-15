@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// InsertArticleToES 像索引中插入数据
+// InsertArticleToES 向索引中插入数据
 func InsertArticleToES(article *model.ArticleModel) (err error) {
 	indexResponse, err := global.ESClient.Index().
 		Index(article.Index()).

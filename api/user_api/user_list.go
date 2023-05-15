@@ -12,7 +12,6 @@ import (
 
 type UserResponse struct {
 	model.UserModel
-	RoleID int `json:"role_id"`
 }
 
 type UserListRequest struct {
@@ -49,7 +48,6 @@ func (UserApi) UserListView(c *gin.Context) {
 		user.Email = desen.DesensitizationEmail(user.Email)
 		userRepList = append(userRepList, UserResponse{
 			UserModel: user,
-			RoleID:    int(user.Role),
 		})
 	}
 	response.OKWithPagingData(userRepList, count, c)

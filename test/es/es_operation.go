@@ -29,7 +29,7 @@ func NewESClient() *elastic.Client {
 	return client
 }
 
-// InsertData 像索引中插入数据
+// InsertData 向索引中插入数据
 func InsertData(data *DemoModel) (err error) {
 	indexResponse, err := client.Index().
 		Index(data.Index()).
