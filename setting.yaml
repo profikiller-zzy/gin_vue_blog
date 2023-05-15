@@ -1,9 +1,9 @@
 mysql:
-  host: 124.220.155.135
+  host: -
   port: 3306
   db: gvb
-  user: root
-  password: root
+  user: -
+  password: -
   log_level: debug
   config: "charset=utf8&parseTime=True&loc=Local"
 logger:
@@ -60,12 +60,12 @@ jwt:
   expire_time: 2
   issuer: profikiller
 redis:
-  ip: "124.220.155.135"
+  ip: -
   port: 6379
-  password: 01312934a
+  password: -
   poolSize: 100
 es:
-  host: 124.220.155.135
+  host: -
   port: 9200
   user:
   password:
